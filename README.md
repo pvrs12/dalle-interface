@@ -1,2 +1,2 @@
 # dalle-interface
-A new interface to dalle with auto-retries. I'm sure they'll hate this...
+https://pvrs12.github.io/dalle-interface/
