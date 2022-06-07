@@ -5,12 +5,26 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<script>
 		var running = false;
+		var startTime;
+		var timerInterval;
+
+		function getElapsedTime(startTime) {
+			let endTime = new Date();
+			let timeDiff = endTime - startTime; //in ms
+			// strip the ms
+			timeDiff /= 100;
+
+			// get seconds
+			let seconds = Math.round(timeDiff) / 10;
+			return seconds.toFixed(1);
+		}
 
 		function finished_fetch_images() {
 			console.log("Done fetching images...");
 			document.getElementById("image-div").classList.toggle("hidden");
 			document.getElementById("throbber-container").classList.toggle("hidden");
 			running = false;
+			clearInterval(timerInterval);
 		}
 
 		function fetch_images_wrapper(image_text) {
@@ -18,13 +32,24 @@
 				console.log("Still running...");
 				return;
 			}
+			startTime = new Date();
 			running = true;
+			timerInterval = setInterval(update_elapsed_time, 100);
 			document.getElementById("image-div").classList.toggle("hidden");
 			document.getElementById("throbber-container").classList.toggle("hidden");
 			fetch_images(image_text, 0);
 		}
 
+		function update_elapsed_time() {
+			if (!running) {
+				return;
+			}
+			let timer_span = document.getElementById("timer-span");
+			timer_span.textContent = getElapsedTime(startTime);
+		}
+
 		function fetch_images(image_text, depth) {
+			document.getElementById("status-span").textContent = "Fetching image... (" + (depth + 1)+ ")";
 			let retry_count = Number(document.getElementById("retry-count-input").value);
 			console.log("fetching images for ", image_text);
 			console.log("execution count ", depth, "/", retry_count);
@@ -75,7 +100,7 @@
 				Retry Count: <input type="number" min=1 max=20 value=5 id="retry-count-input" /><br />
 				Retry Timeout (s): <input type="number" min=3 max=20 value=3 id="retry-timeout-input" /><br />
 				<div>
-					Status: <span id="status-span"></span>
+					Status: <span id="status-span"></span> <span id="timer-span"></span>
 				</div>
 			</div>
 			<div id="throbber-container" class="hidden">
