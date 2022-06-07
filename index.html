@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<script>
+		var running = false;
+
+		function finished_fetch_images() {
+			console.log("Done fetching images...");
+			document.getElementById("image-div").classList.toggle("hidden");
+			document.getElementById("throbber-container").classList.toggle("hidden");
+			running = false;
+		}
+
+		function fetch_images_wrapper(image_text) {
+			if (running) {
+				console.log("Still running...");
+				return;
+			}
+			running = true;
+			document.getElementById("image-div").classList.toggle("hidden");
+			document.getElementById("throbber-container").classList.toggle("hidden");
+			fetch_images(image_text, 0);
+		}
+
+		function fetch_images(image_text, depth) {
+			let retry_count = Number(document.getElementById("retry-count-input").value);
+			console.log("fetching images for ", image_text);
+			console.log("execution count ", depth, "/", retry_count);
+			if (depth >= retry_count) {
+				document.getElementById("status-span").textContent = "Giving up!";
+				finished_fetch_images();
+				return;
+			}
+			fetch('https://bf.dallemini.ai/generate', {
+				method: "POST",
+				mode: "cors",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({
+					"prompt": image_text
+				}),
+			})
+				.then(response => response.json())
+				.then(data => {
+					console.log(data);
+					for (let i = 0; i < data["images"].length; ++i) {
+						let image_base64 = data["images"][i].replace(/\n/,"");
+						document.getElementById("result"+i).src = "data:image/png;base64," + image_base64;
+					}
+					document.getElementById("status-span").textContent = "Done!";
+					finished_fetch_images();
+					return;
+				}).catch((exc) => {
+					console.log(exc);
+					document.getElementById("status-span").textContent = "Retrying after failure... (" + (depth + 1)+ ")";
+					let timeout = Number(document.getElementById("retry-timeout-input").value) * 1000
+					setTimeout(() => {
+						fetch_images(image_text, depth+1);
+					}, timeout);
+				});
+		}
+	</script>
+
+	<link rel="stylesheet" href="style.css" />
+
+	</head>
+	<body>
+		<div>
+			<div class="half-container">
+				<input type="text" placeholder="image prompt" id="image-prompt-input"/>
+				<button type="button" id="image-prompt-button">Submit</button><br />
+				Retry Count: <input type="number" min=1 max=20 value=5 id="retry-count-input" /><br />
+				Retry Timeout (s): <input type="number" min=3 max=20 value=3 id="retry-timeout-input" /><br />
+				<div>
+					Status: <span id="status-span"></span>
+				</div>
+			</div>
+			<div id="throbber-container" class="hidden">
+				<img id="throbber-img" src="https://impossiblue.github.io/log/150407/ie.gif"></img>
+			</div>
+		</div>
+		<hr />
+		<div>
+			<div id="image-div">
+				<img src="" class=result-image id="result0"></img>
+				<img src="" class=result-image id="result1"></img>
+				<img src="" class=result-image id="result2"></img>
+				<img src="" class=result-image id="result3"></img>
+				<img src="" class=result-image id="result4"></img>
+				<img src="" class=result-image id="result5"></img>
+				<img src="" class=result-image id="result6"></img>
+				<img src="" class=result-image id="result7"></img>
+				<img src="" class=result-image id="result8"></img>
+			</div>
+		</div>
+
+		<script>
+			document.getElementById("image-prompt-input").addEventListener("keypress", (event) => {
+				if (event.keyCode == 13) {
+					fetch_images_wrapper(document.getElementById("image-prompt-input").value);
+				}
+			}
+			document.getElementById("image-prompt-button").addEventListener("click", () => {
+				fetch_images_wrapper(document.getElementById("image-prompt-input").value);
+			});
+		</script>
+
+	</body>
+</html>

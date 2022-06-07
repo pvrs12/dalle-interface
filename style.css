@@ -1,0 +1,39 @@
+body {
+	background-color: #ddd;
+	font-family: sans-serif;
+}
+
+#image-prompt-input {
+	margin: 10px;
+
+	width: 600px;
+}
+
+#image-prompt-button {
+	margin: 5px;
+}
+
+#image-div {
+	display: grid;
+
+	grid-template-columns: repeat(3, 260px);
+	grid-template-rows: repeat(3, 260px);
+
+	gap: 5px 5px;
+}
+
+/* zip zap zoop */
+.hidden {
+	display: none !important;
+}
+
+.half-container {
+	display: inline-block;
+
+	width: 48%;
+	height: 100%;
+}
+
+#throbber-img {
+	width: 500px;
+}
