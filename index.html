@@ -96,7 +96,7 @@
 	<body>
 		<div>
 			<div class="half-container">
-				<input type="text" placeholder="image prompt" id="image-prompt-input"/>
+				<input type="text" placeholder="image prompt" id="image-prompt-input"/><br />
 				<button type="button" id="image-prompt-button">Submit</button><br />
 				Retry Count: <input type="number" min=1 max=20 value=5 id="retry-count-input" /><br />
 				Retry Timeout (s): <input type="number" min=3 max=20 value=3 id="retry-timeout-input" /><br />
@@ -109,8 +109,8 @@
 			</div>
 		</div>
 		<hr />
-		<div>
-			<div id="image-div">
+		<div class="full-width">
+			<div id="image-div" class="full-width">
 				<img src="" class=result-image id="result0"></img>
 				<img src="" class=result-image id="result1"></img>
 				<img src="" class=result-image id="result2"></img>
