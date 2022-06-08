@@ -32,7 +32,6 @@
 				console.log("Still running...");
 				return;
 			}
-			startTime = new Date();
 			running = true;
 			timerInterval = setInterval(update_elapsed_time, 100);
 			document.getElementById("image-div").classList.toggle("hidden");
@@ -49,6 +48,7 @@
 		}
 
 		function fetch_images(image_text, depth) {
+			startTime = new Date();
 			document.getElementById("status-span").textContent = "Fetching image... (" + (depth + 1)+ ")";
 			let retry_count = Number(document.getElementById("retry-count-input").value);
 			console.log("fetching images for ", image_text);
@@ -82,6 +82,7 @@
 					console.log(exc);
 					document.getElementById("status-span").textContent = "Retrying after failure... (" + (depth + 1)+ ")";
 					let timeout = Number(document.getElementById("retry-timeout-input").value) * 1000
+					startTime = new Date();
 					setTimeout(() => {
 						fetch_images(image_text, depth+1);
 					}, timeout);
