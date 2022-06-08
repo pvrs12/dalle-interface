@@ -12,7 +12,9 @@ body {
 }
 
 .full-width {
+	margin: auto;
 	width: 100%;
+	max-width: 800px;
 }
 
 .result-image {
